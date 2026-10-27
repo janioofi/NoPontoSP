@@ -42,6 +42,12 @@
             android:label="@string/title_parada_search"
             android:parentActivityName=".ui.MainActivity" />
 
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_settings"
+            android:parentActivityName=".ui.MainActivity" />
+
     </application>
 
 </manifest>

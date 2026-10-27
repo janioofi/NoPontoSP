@@ -27,7 +27,7 @@ public class LinhaDetailActivity extends AppCompatActivity {
     private ActivityLinhaDetailBinding binding;
     private ParadaAdapter adapter;
     private PageController<Parada> pager;
-    private final OlhoVivoRepository repository = OlhoVivoRepository.getInstance();
+    private OlhoVivoRepository repository;
 
     private int codigoLinha;
     private int sentido;
@@ -38,6 +38,7 @@ public class LinhaDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLinhaDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        repository = OlhoVivoRepository.getInstance(this);
 
         codigoLinha = getIntent().getIntExtra(EXTRA_CODIGO_LINHA, -1);
         sentido = getIntent().getIntExtra(EXTRA_SENTIDO, -1);

@@ -1,33 +1,19 @@
-import java.util.Properties
-
 plugins {
     id 'com.android.application'
 }
 
-// Lê local.properties para obter o token da API Olho Vivo.
-// Esse arquivo não é versionado (veja .gitignore e local.properties.example).
-def localProps = new Properties()
-def localPropsFile = rootProject.file('local.properties')
-if (localPropsFile.exists()) {
-    localProps.load(new FileInputStream(localPropsFile))
-}
-def olhoVivoToken = localProps.getProperty('OLHOVIVO_API_TOKEN', '')
-
 android {
-    namespace 'com.example.olhovivosp'
+    namespace 'com.janioofi.olhovivosp'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.olhovivosp"
+        applicationId "com.janioofi.olhovivosp"
         minSdk 24
         targetSdk 34
         versionCode 1
-        versionName "1.0"
+        versionName "1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        // Exposto ao código Java via BuildConfig.OLHOVIVO_API_TOKEN
-        buildConfigField "String", "OLHOVIVO_API_TOKEN", "\"${olhoVivoToken}\""
 
     }
 

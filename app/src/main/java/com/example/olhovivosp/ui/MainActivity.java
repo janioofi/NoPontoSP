@@ -6,8 +6,10 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.olhovivosp.BuildConfig;
 import com.example.olhovivosp.R;
 import com.example.olhovivosp.databinding.ActivityMainBinding;
 import com.example.olhovivosp.domain.Linha;
@@ -23,13 +25,26 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private LinhaAdapter adapter;
     private PageController<Linha> pager;
-    private final OlhoVivoRepository repository = OlhoVivoRepository.getInstance();
+    private OlhoVivoRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        repository = OlhoVivoRepository.getInstance(this);
+        binding.textAppVersion.setText(getString(R.string.format_app_version, BuildConfig.VERSION_NAME));
+        binding.toolbar.setNavigationOnClickListener(v ->
+                binding.drawerLayout.openDrawer(GravityCompat.START));
+        binding.navigationView.setNavigationItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.action_settings) {
+                binding.drawerLayout.closeDrawer(GravityCompat.START);
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            }
+            return false;
+        });
 
         adapter = new LinhaAdapter(this::abrirDetalheLinha);
         binding.recyclerLinhas.setLayoutManager(new LinearLayoutManager(this));

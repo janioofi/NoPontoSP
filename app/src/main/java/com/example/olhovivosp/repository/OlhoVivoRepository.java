@@ -1,6 +1,7 @@
 package com.example.olhovivosp.repository;
 
-import com.example.olhovivosp.BuildConfig;
+import android.content.Context;
+
 import com.example.olhovivosp.domain.Linha;
 import com.example.olhovivosp.domain.Parada;
 import com.example.olhovivosp.domain.Previsao;
@@ -27,6 +28,8 @@ import java.util.Locale;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 /**
  * Único ponto de acesso à API Olho Vivo. Converte DTOs em modelos de domínio e trata
@@ -40,24 +43,46 @@ public class OlhoVivoRepository {
 
     private final OlhoVivoApi api;
     private final ApiClient apiClient;
-    private final String apiToken;
+    private final ApiTokenStore apiTokenStore;
+    private volatile String apiToken = "";
+    private volatile String tokenStorageError;
     private volatile boolean authenticated = false;
+    private volatile int tokenGeneration;
 
-    private OlhoVivoRepository() {
+    private OlhoVivoRepository(Context context) {
         apiClient = ApiClient.getInstance();
         api = apiClient.getApi();
-        apiToken = BuildConfig.OLHOVIVO_API_TOKEN;
+        apiTokenStore = new ApiTokenStore(context);
+        try {
+            apiToken = apiTokenStore.read();
+        } catch (GeneralSecurityException | IOException error) {
+            tokenStorageError = "Não foi possível ler o token salvo. Configure o token novamente.";
+        }
     }
 
-    public static OlhoVivoRepository getInstance() {
+    public static OlhoVivoRepository getInstance(Context context) {
         if (instance == null) {
             synchronized (OlhoVivoRepository.class) {
                 if (instance == null) {
-                    instance = new OlhoVivoRepository();
+                    instance = new OlhoVivoRepository(context.getApplicationContext());
                 }
             }
         }
         return instance;
+    }
+
+    public synchronized void saveApiToken(String token) throws GeneralSecurityException, IOException {
+        String value = token == null ? "" : token.trim();
+        apiTokenStore.write(value);
+        apiToken = value;
+        tokenStorageError = null;
+        tokenGeneration++;
+        authenticated = false;
+        apiClient.resetSession();
+    }
+
+    public boolean hasConfiguredApiToken() {
+        return apiToken != null && !apiToken.trim().isEmpty() && tokenStorageError == null;
     }
 
     public void buscarLinhas(String termosBusca, RepositoryCallback<List<Linha>> callback) {
@@ -196,14 +221,27 @@ public class OlhoVivoRepository {
 
     private <D, M> void executeWithAuth(CallFactory<D> callFactory, Mapper<D, M> mapper,
                                          RepositoryCallback<M> callback, boolean isRetry) {
-        if (apiToken == null || apiToken.trim().isEmpty() || apiToken.contains("coloque_seu_token")) {
-            callback.onError("Token da API Olho Vivo não configurado. Preencha OLHOVIVO_API_TOKEN em local.properties.");
+        if (tokenStorageError != null) {
+            callback.onError(tokenStorageError);
+            return;
+        }
+        if (apiToken == null || apiToken.trim().isEmpty()) {
+            callback.onError("Token da API Olho Vivo não configurado. Abra o menu e informe seu token.");
             return;
         }
 
         if (!authenticated) {
+            int generation = tokenGeneration;
+            String token = apiToken;
             autenticar(
+                    token,
+                    generation,
                     () -> executeWithAuth(callFactory, mapper, callback, isRetry),
+                    () -> {
+                        apiClient.resetSession();
+                        authenticated = false;
+                        executeWithAuth(callFactory, mapper, callback, isRetry);
+                    },
                     callback::onError
             );
             return;
@@ -234,12 +272,24 @@ public class OlhoVivoRepository {
         });
     }
 
-    private void autenticar(Runnable onSuccess, java.util.function.Consumer<String> onError) {
-        api.autenticar(apiToken).enqueue(new Callback<Boolean>() {
+    private void autenticar(String token, int generation, Runnable onSuccess,
+                            Runnable onTokenChanged,
+                            java.util.function.Consumer<String> onError) {
+        api.autenticar(token).enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                boolean tokenChanged;
+                synchronized (OlhoVivoRepository.this) {
+                    tokenChanged = generation != tokenGeneration;
+                    if (!tokenChanged && response.isSuccessful() && Boolean.TRUE.equals(response.body())) {
+                        authenticated = true;
+                    }
+                }
+                if (tokenChanged) {
+                    onTokenChanged.run();
+                    return;
+                }
                 if (response.isSuccessful() && Boolean.TRUE.equals(response.body())) {
-                    authenticated = true;
                     onSuccess.run();
                 } else if (!response.isSuccessful() && response.code() >= 500) {
                     onError.accept("A API Olho Vivo retornou erro HTTP " + response.code()
@@ -252,7 +302,11 @@ public class OlhoVivoRepository {
 
             @Override
             public void onFailure(Call<Boolean> call, Throwable t) {
-                onError.accept("Falha ao autenticar com a API Olho Vivo: " + t.getMessage());
+                if (generation != tokenGeneration) {
+                    onTokenChanged.run();
+                } else {
+                    onError.accept("Falha ao autenticar com a API Olho Vivo: " + t.getMessage());
+                }
             }
         });
     }

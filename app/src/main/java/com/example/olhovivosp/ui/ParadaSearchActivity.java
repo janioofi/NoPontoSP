@@ -23,13 +23,14 @@ public class ParadaSearchActivity extends AppCompatActivity {
     private ActivityParadaSearchBinding binding;
     private ParadaAdapter adapter;
     private PageController<Parada> pager;
-    private final OlhoVivoRepository repository = OlhoVivoRepository.getInstance();
+    private OlhoVivoRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityParadaSearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        repository = OlhoVivoRepository.getInstance(this);
 
         binding.toolbar.setNavigationOnClickListener(v -> onBackPressed());
 

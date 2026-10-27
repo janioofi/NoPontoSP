@@ -68,7 +68,7 @@ public class MapaActivity extends AppCompatActivity {
     private PageController<com.example.olhovivosp.domain.Previsao> pager;
     private MyLocationNewOverlay localizacaoOverlay;
     private Polyline trajetoOverlay;
-    private final OlhoVivoRepository repository = OlhoVivoRepository.getInstance();
+    private OlhoVivoRepository repository;
     private final Handler pollingHandler = new Handler(Looper.getMainLooper());
     private final Map<String, Marker> marcadoresPorPrefixo = new HashMap<>();
 
@@ -99,6 +99,7 @@ public class MapaActivity extends AppCompatActivity {
         }
         binding = ActivityMapaBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        repository = OlhoVivoRepository.getInstance(this);
 
         codigoLinha = getIntent().getIntExtra(EXTRA_CODIGO_LINHA, -1);
         sentido = getIntent().getIntExtra(EXTRA_SENTIDO, -1);
@@ -224,9 +225,76 @@ public class MapaActivity extends AppCompatActivity {
                     binding.mapView.zoomToBoundingBox(BoundingBox.fromGeoPoints(geometry), true, 80);
                     cameraAjustada = true;
                 }
+                carregarParadasDaRota(geometry);
                 binding.mapView.invalidate();
             });
         });
+    }
+
+    private void carregarParadasDaRota(List<GeoPoint> geometry) {
+        repository.buscarParadasPorLinha(codigoLinha, new RepositoryCallback<List<Parada>>() {
+            @Override
+            public void onSuccess(List<Parada> paradas) {
+                runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    int count = 0;
+                    for (Parada parada : paradas) {
+                        if (!Double.isFinite(parada.latitude) || !Double.isFinite(parada.longitude)
+                                || parada.latitude < -90 || parada.latitude > 90
+                                || parada.longitude < -180 || parada.longitude > 180
+                                || distanciaAteTrajetoMetros(new GeoPoint(parada.latitude, parada.longitude),
+                                geometry) > 100) {
+                            continue;
+                        }
+
+                        Marker marker = new Marker(binding.mapView);
+                        marker.setPosition(new GeoPoint(parada.latitude, parada.longitude));
+                        marker.setTitle("Ponto de ônibus");
+                        marker.setSnippet(parada.nome);
+                        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                        marker.setIcon(getDrawable(R.drawable.ic_bus_stop));
+                        binding.mapView.getOverlays().add(marker);
+                        count++;
+                    }
+                    binding.textInfoTrajeto.setText(count == 0
+                            ? "Trajeto GTFS • pontos de parada indisponíveis"
+                            : "Trajeto GTFS • " + count + " pontos de parada");
+                    binding.mapView.invalidate();
+                });
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    binding.textInfoTrajeto.setText("Trajeto GTFS • " + message);
+                });
+            }
+        });
+    }
+
+    private double distanciaAteTrajetoMetros(GeoPoint point, List<GeoPoint> geometry) {
+        double latitudeScale = 111_320.0;
+        double longitudeScale = latitudeScale * Math.cos(Math.toRadians(point.getLatitude()));
+        double pointX = point.getLongitude() * longitudeScale;
+        double pointY = point.getLatitude() * latitudeScale;
+        double minimumDistance = Double.POSITIVE_INFINITY;
+
+        for (int i = 1; i < geometry.size(); i++) {
+            GeoPoint start = geometry.get(i - 1);
+            GeoPoint end = geometry.get(i);
+            double startX = start.getLongitude() * longitudeScale - pointX;
+            double startY = start.getLatitude() * latitudeScale - pointY;
+            double dx = (end.getLongitude() - start.getLongitude()) * longitudeScale;
+            double dy = (end.getLatitude() - start.getLatitude()) * latitudeScale;
+            double lengthSquared = dx * dx + dy * dy;
+            double fraction = lengthSquared == 0 ? 0
+                    : Math.max(0, Math.min(1, -(startX * dx + startY * dy) / lengthSquared));
+            double distanceX = startX + fraction * dx;
+            double distanceY = startY + fraction * dy;
+            minimumDistance = Math.min(minimumDistance, Math.hypot(distanceX, distanceY));
+        }
+        return minimumDistance;
     }
 
     private android.graphics.Bitmap locationBitmap() {

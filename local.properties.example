@@ -1,0 +1,9 @@
+# Copie este arquivo para "local.properties" (na raiz do projeto, ao lado de settings.gradle)
+# e preencha com seus próprios valores. O local.properties NUNCA deve ser commitado
+# (o template de .gitignore do Android Studio já ignora esse arquivo por padrão).
+
+# Caminho do SDK do Android (o Android Studio preenche isso automaticamente)
+# sdk.dir=/caminho/para/o/Android/Sdk
+
+# Token de desenvolvedor da API Olho Vivo (sptrans.com.br/desenvolvedores -> Meus Aplicativos)
+OLHOVIVO_API_TOKEN=coloque_seu_token_aqui

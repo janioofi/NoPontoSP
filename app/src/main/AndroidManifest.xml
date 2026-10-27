@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Necessário para todas as chamadas à API Olho Vivo -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.OlhoVivoSP"
+        android:usesCleartextTraffic="false">
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.LinhaDetailActivity"
+            android:exported="false"
+            android:label="@string/title_linha_detail"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.MapaActivity"
+            android:exported="false"
+            android:label="@string/title_mapa"
+            android:parentActivityName=".ui.LinhaDetailActivity" />
+
+        <activity
+            android:name=".ui.ParadaSearchActivity"
+            android:exported="false"
+            android:label="@string/title_parada_search"
+            android:parentActivityName=".ui.MainActivity" />
+
+    </application>
+
+</manifest>

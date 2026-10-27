@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Olho Vivo SP</string>
+    <string name="title_linha_detail">Detalhe da linha</string>
+    <string name="title_mapa">Mapa em tempo real</string>
+    <string name="title_parada_search">Buscar parada</string>
+
+    <string name="hint_busca_linha">Buscar linha (nome ou número)</string>
+    <string name="hint_busca_parada">Buscar parada (nome ou endereço)</string>
+    <string name="btn_buscar">Buscar</string>
+    <string name="btn_buscar_parada">Buscar parada</string>
+    <string name="btn_ver_mapa">Ver no mapa</string>
+
+    <string name="format_sentido_destino">Destino: %1$s</string>
+    <string name="format_mapa_linha_destino">%1$s → %2$s</string>
+    <string name="label_destino_indisponivel">Destino não informado</string>
+    <string name="label_paradas">Pontos de parada</string>
+
+    <string name="msg_sem_resultados">Nenhum resultado encontrado.</string>
+    <string name="msg_erro_rede">Falha de comunicação com a API Olho Vivo. Verifique sua conexão e tente novamente.</string>
+    <string name="msg_erro_autenticacao">Falha na autenticação com a API. Verifique o token em local.properties.</string>
+    <string name="msg_carregando">Carregando…</string>
+    <string name="msg_atualizando_posicoes">Atualizando posições…</string>
+    <string name="msg_sem_veiculos_linha">Nenhum ônibus localizado nesta linha no momento.</string>
+    <string name="msg_trajeto_aproximado">Trajeto real da linha conforme o GTFS.</string>
+    <string name="msg_trajeto_indisponivel">Não foi possível carregar o trajeto da linha.</string>
+    <string name="msg_localizacao_indisponivel">Localização indisponível. Verifique a permissão e o GPS do aparelho.</string>
+    <string name="action_minha_localizacao">Centralizar na minha localização</string>
+    <string name="msg_previsao_indisponivel">Previsão indisponível para esta parada no momento.</string>
+
+    <string name="format_previsao_item">%1$s — chegada prevista às %2$s</string>
+    <string name="format_veiculo_count">%1$d veículo(s) em circulação</string>
+</resources>

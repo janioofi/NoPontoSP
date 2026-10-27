@@ -1,0 +1,10 @@
+buildscript {
+    ext {
+        agp_version = '7.4.1'
+        agp_version1 = '9.4.1'
+    }
+}// Top-level build file: declarações de plugins compartilhadas por todos os módulos.
+plugins {
+    id 'com.android.application' version '9.4.1' apply false
+    id 'com.android.library' version '8.5.2' apply false
+}

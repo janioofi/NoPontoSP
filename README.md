@@ -1,4 +1,4 @@
-# OlhoVivoSP atualizado
+# NoPontoSP atualizado
 
 Projeto Android Java/XML reconstruído integralmente do código consolidado fornecido. Abra esta pasta no Android Studio. Consulte VALIDACAO.md para alterações, limitações e roteiro de testes.
 

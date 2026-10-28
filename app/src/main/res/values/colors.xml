@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="sp_trans_red">#00796B</color>
-    <color name="sp_trans_red_dark">#004D40</color>
+    <color name="primary_teal">#00796B</color>
+    <color name="green_deep">#004D40</color>
     <color name="background_light">#F3F6F8</color>
-    <color name="text_primary">#212121</color>
+    <color name="surface_white">#FFFFFF</color>
+    <color name="surface_selected">#D5F3EB</color>
+    <color name="text_primary">#172B35</color>
     <color name="text_secondary">#52616B</color>
-    <color name="divider">#E0E0E0</color>
-    <color name="error">#C62828</color>
+    <color name="divider">#D4DEDA</color>
+    <color name="warning">#855300</color>
+    <color name="error">#BA1A1A</color>
     <color name="marker_veiculo">#1565C0</color>
+    <color name="button_text">#FFFFFF</color>
+    <color name="header_start">#00796B</color>
+    <color name="header_end">#004D40</color>
+    <color name="toolbar_background">#004D40</color>
+    <color name="location_halo">#331565C0</color>
+    <color name="map_attribution_background">#CCFFFFFF</color>
 </resources>

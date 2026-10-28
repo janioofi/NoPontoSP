@@ -1,12 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Olho Vivo SP</string>
+    <string name="app_name">No Ponto SP</string>
     <string name="title_linha_detail">Detalhe da linha</string>
     <string name="title_mapa">Mapa em tempo real</string>
     <string name="title_parada_search">Buscar parada</string>
+    <string name="title_settings">Configurações</string>
+    <string name="menu_settings">Tema e configurações</string>
+    <string name="home_header_title">Seu caminho, em tempo real</string>
+    <string name="home_header_subtitle">Encontre linhas, pontos e acompanhe os ônibus de São Paulo.</string>
+    <string name="format_app_version">Versão %1$s</string>
+    <string name="settings_api_title">Conectar à SPTrans</string>
+    <string name="settings_api_description">Informe seu token de desenvolvedor Olho Vivo. Ele fica salvo de forma criptografada neste dispositivo.</string>
+    <string name="settings_api_help_title">Como obter seu token</string>
+    <string name="settings_api_steps">1. Toque em “Abrir portal oficial” abaixo.&#10;2. No site da SPTrans, acesse a área de Desenvolvedores e escolha “Cadastre-se” ou “Registrar-se”.&#10;3. Preencha o cadastro e confirme seu e-mail, se solicitado.&#10;4. Entre na sua conta e solicite o acesso à API Olho Vivo seguindo as instruções da área de desenvolvedores.&#10;5. Copie o token fornecido pela SPTrans, volte ao app, cole no campo abaixo e toque em “Salvar token”.</string>
+    <string name="action_open_developer_portal">Abrir portal oficial</string>
+    <string name="settings_api_note">Os nomes das opções no portal podem mudar. Use somente o site oficial da SPTrans e não compartilhe seu token.</string>
+    <string name="settings_appearance_title">Aparência</string>
+    <string name="settings_appearance_description">Escolha como o No Ponto SP deve exibir as telas e o mapa.</string>
+    <string name="theme_system">Usar tema do sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Escuro</string>
+    <string name="map_attribution_light">© OpenStreetMap contributors</string>
+    <string name="legend_bus_stop">Ponto</string>
+    <string name="legend_bus">Ônibus</string>
+    <string name="legend_my_location">Você</string>
+    <string name="hint_api_token">Token da API Olho Vivo</string>
+    <string name="action_save_token">Salvar token</string>
+    <string name="action_remove_token">Remover token salvo</string>
+    <string name="error_token_empty">Informe o token antes de salvar.</string>
+    <string name="msg_token_configured">Token configurado neste dispositivo.</string>
+    <string name="msg_token_not_configured">Nenhum token configurado. Obtenha um em sptrans.com.br/desenvolvedores.</string>
+    <string name="msg_token_saved">Token salvo. A conexão será autenticada na próxima consulta.</string>
+    <string name="msg_token_save_error">Não foi possível salvar o token: %1$s</string>
+    <string name="msg_token_removed">Token removido.</string>
 
     <string name="hint_busca_linha">Buscar linha (nome ou número)</string>
     <string name="hint_busca_parada">Buscar parada (nome ou endereço)</string>
+    <string name="parada_search_header_title">Encontre seu ponto</string>
+    <string name="parada_search_header_subtitle">Pesquise pelo nome da parada ou por um endereço próximo.</string>
     <string name="btn_buscar">Buscar</string>
     <string name="btn_buscar_parada">Buscar parada</string>
     <string name="btn_ver_mapa">Ver no mapa</string>
@@ -18,7 +49,7 @@
 
     <string name="msg_sem_resultados">Nenhum resultado encontrado.</string>
     <string name="msg_erro_rede">Falha de comunicação com a API Olho Vivo. Verifique sua conexão e tente novamente.</string>
-    <string name="msg_erro_autenticacao">Falha na autenticação com a API. Verifique o token em local.properties.</string>
+    <string name="msg_erro_autenticacao">Falha na autenticação com a API. Verifique o token nas configurações do app.</string>
     <string name="msg_carregando">Carregando…</string>
     <string name="msg_atualizando_posicoes">Atualizando posições…</string>
     <string name="msg_sem_veiculos_linha">Nenhum ônibus localizado nesta linha no momento.</string>

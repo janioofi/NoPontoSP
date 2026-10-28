@@ -1,39 +1,48 @@
-import java.util.Properties
-
 plugins {
     id 'com.android.application'
 }
 
-// Lê local.properties para obter o token da API Olho Vivo.
-// Esse arquivo não é versionado (veja .gitignore e local.properties.example).
-def localProps = new Properties()
-def localPropsFile = rootProject.file('local.properties')
-if (localPropsFile.exists()) {
-    localProps.load(new FileInputStream(localPropsFile))
+def releaseSigningProperties = new Properties()
+def releaseSigningPropertiesFile = rootProject.file('local.properties')
+if (releaseSigningPropertiesFile.exists()) {
+    releaseSigningPropertiesFile.withInputStream { stream ->
+        releaseSigningProperties.load(stream)
+    }
 }
-def olhoVivoToken = localProps.getProperty('OLHOVIVO_API_TOKEN', '')
 
 android {
-    namespace 'com.example.olhovivosp'
+    namespace 'com.janioofi.nopontosp'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.olhovivosp"
+        applicationId "com.janioofi.nopontosp"
         minSdk 24
         targetSdk 34
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        // Exposto ao código Java via BuildConfig.OLHOVIVO_API_TOKEN
-        buildConfigField "String", "OLHOVIVO_API_TOKEN", "\"${olhoVivoToken}\""
+    }
 
+    signingConfigs {
+        release {
+            def releaseStorePath = releaseSigningProperties.getProperty('RELEASE_STORE_FILE')
+            if (releaseStorePath != null) {
+                storeFile rootProject.file(releaseStorePath)
+                storePassword releaseSigningProperties.getProperty('RELEASE_STORE_PASSWORD')
+                keyAlias releaseSigningProperties.getProperty('RELEASE_KEY_ALIAS')
+                keyPassword releaseSigningProperties.getProperty('RELEASE_KEY_PASSWORD')
+            }
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
+            if (releaseSigningProperties.getProperty('RELEASE_STORE_FILE') != null) {
+                signingConfig signingConfigs.release
+            }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {

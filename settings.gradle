@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "OlhoVivoSP"
+rootProject.name = "No Ponto SP"
 include ':app'

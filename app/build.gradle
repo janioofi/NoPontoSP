@@ -2,6 +2,14 @@ plugins {
     id 'com.android.application'
 }
 
+def releaseSigningProperties = new Properties()
+def releaseSigningPropertiesFile = rootProject.file('local.properties')
+if (releaseSigningPropertiesFile.exists()) {
+    releaseSigningPropertiesFile.withInputStream { stream ->
+        releaseSigningProperties.load(stream)
+    }
+}
+
 android {
     namespace 'com.janioofi.nopontosp'
     compileSdk 34
@@ -17,9 +25,24 @@ android {
 
     }
 
+    signingConfigs {
+        release {
+            def releaseStorePath = releaseSigningProperties.getProperty('RELEASE_STORE_FILE')
+            if (releaseStorePath != null) {
+                storeFile rootProject.file(releaseStorePath)
+                storePassword releaseSigningProperties.getProperty('RELEASE_STORE_PASSWORD')
+                keyAlias releaseSigningProperties.getProperty('RELEASE_KEY_ALIAS')
+                keyPassword releaseSigningProperties.getProperty('RELEASE_KEY_PASSWORD')
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            if (releaseSigningProperties.getProperty('RELEASE_STORE_FILE') != null) {
+                signingConfig signingConfigs.release
+            }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {

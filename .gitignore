@@ -1,6 +1,7 @@
 *.iml
 .gradle
 /local.properties
+/app/no-pontosp-release-key.jks
 /.idea/
 .DS_Store
 /build

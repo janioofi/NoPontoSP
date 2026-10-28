@@ -8,7 +8,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/green_deep"
+        android:background="@color/toolbar_background"
         app:navigationIcon="@drawable/ic_arrow_back"
         app:titleTextColor="@android:color/white"
         app:layout_constraintTop_toTopOf="parent" />
@@ -30,14 +30,29 @@
         app:backgroundTint="@color/primary_teal"
         app:layout_constraintEnd_toEndOf="@id/mapView"
         app:layout_constraintTop_toTopOf="@id/mapView"
-        app:tint="@android:color/white" />
+        app:tint="@color/button_text" />
+
+    <TextView
+        android:id="@+id/textMapAttribution"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp"
+        android:background="@color/map_attribution_background"
+        android:paddingStart="6dp"
+        android:paddingTop="3dp"
+        android:paddingEnd="6dp"
+        android:paddingBottom="3dp"
+        android:textColor="@color/text_secondary"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@id/mapView"
+        app:layout_constraintStart_toStartOf="@id/mapView" />
 
     <LinearLayout
         android:id="@+id/painelInferior"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@android:color/white"
+        android:background="@color/surface_white"
         android:elevation="8dp"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent">

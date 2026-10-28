@@ -10,7 +10,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/green_deep"
+        android:background="@color/toolbar_background"
         android:title="@string/title_parada_search"
         app:navigationIcon="@drawable/ic_arrow_back"
         app:titleTextColor="@android:color/white" />
@@ -43,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/parada_search_header_title"
-                android:textColor="@color/surface_white"
+                android:textColor="@android:color/white"
                 android:textSize="21sp"
                 android:textStyle="bold" />
 
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="@string/parada_search_header_subtitle"
-                android:textColor="@color/background_light"
+                android:textColor="@android:color/white"
                 android:textSize="13sp" />
         </LinearLayout>
     </LinearLayout>
@@ -96,6 +96,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:backgroundTint="@color/primary_teal"
+            android:textColor="@color/button_text"
             android:text="@string/btn_buscar" />
 
     </LinearLayout>

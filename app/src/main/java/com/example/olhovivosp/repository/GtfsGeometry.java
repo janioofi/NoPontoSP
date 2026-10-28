@@ -4,6 +4,7 @@ import android.content.res.AssetManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.osmdroid.util.GeoPoint;
+import com.example.olhovivosp.domain.Parada;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,13 +38,12 @@ public final class GtfsGeometry {
         }
     }
 
-    private static String readGeometry(AssetManager assets, String shapeId) throws IOException {
-        String assetBase = "gtfs/" + shapeId + ".json";
+    private static String readJsonAsset(AssetManager assets, String assetBase) throws IOException {
         InputStream raw;
         try {
-            raw = assets.open(assetBase);
+            raw = assets.open(assetBase + ".json");
         } catch (FileNotFoundException missingUncompressedAsset) {
-            raw = assets.open(assetBase + ".gz");
+            raw = assets.open(assetBase + ".json.gz");
         }
 
         BufferedInputStream input = new BufferedInputStream(raw);
@@ -82,53 +82,12 @@ public final class GtfsGeometry {
         if (route == null || route.trim().isEmpty()) return Collections.emptyList();
 
         JSONObject index = new JSONObject(read(assets.open("gtfs/index.json")));
-        JSONArray entries = index.optJSONArray(route.trim());
-        if (entries == null || entries.length() == 0) return Collections.emptyList();
-
-        String selectedShapeId;
-
-        if (entries.length() == 1) {
-            selectedShapeId = entries.getJSONArray(0).getString(1);
-        } else {
-            String normDest = normalize(destination);
-            int bestMatchIndex = -1;
-            int bestScore = -1;
-
-            if (!normDest.isEmpty()) {
-                for (int i = 0; i < entries.length(); i++) {
-                    JSONArray entry = entries.getJSONArray(i);
-                    String headsign = entry.getString(0);
-                    String normHead = normalize(headsign);
-
-                    if (normDest.equals(normHead)) {
-                        bestMatchIndex = i;
-                        break;
-                    } else if (normHead.contains(normDest) || normDest.contains(normHead)) {
-                        if (bestScore < 2) {
-                            bestMatchIndex = i;
-                            bestScore = 2;
-                        }
-                    }
-                }
-            }
-
-            if (bestMatchIndex != -1) {
-                selectedShapeId = entries.getJSONArray(bestMatchIndex).getString(1);
-            } else {
-                // Sentido SPTrans: 1 -> index 0 (direction_id 0), 2 -> index 1 (direction_id 1)
-                int targetIndex = (sentido == 2) ? 1 : 0;
-                if (targetIndex >= entries.length()) targetIndex = 0;
-                selectedShapeId = entries.getJSONArray(targetIndex).getString(1);
-            }
-        }
-
-        if (selectedShapeId == null || selectedShapeId.isEmpty()) {
-            return Collections.emptyList();
-        }
+        String selectedShapeId = selectShapeId(index, route, sentido, destination);
+        if (selectedShapeId.isEmpty()) return Collections.emptyList();
 
         JSONArray points;
         try {
-            points = new JSONArray(readGeometry(assets, selectedShapeId));
+            points = new JSONArray(readJsonAsset(assets, "gtfs/" + selectedShapeId));
         } catch (IOException e) {
             return Collections.emptyList();
         }
@@ -139,5 +98,70 @@ public final class GtfsGeometry {
             result.add(new GeoPoint(pair.getDouble(0), pair.getDouble(1)));
         }
         return result;
+    }
+
+    public static List<Parada> loadStops(AssetManager assets, String route, int sentido,
+                                         String destination) throws Exception {
+        if (route == null || route.trim().isEmpty()) return Collections.emptyList();
+
+        JSONObject index = new JSONObject(read(assets.open("gtfs/index.json")));
+        String shapeId = selectShapeId(index, route, sentido, destination);
+        if (shapeId.isEmpty()) return Collections.emptyList();
+
+        JSONArray stops;
+        try {
+            stops = new JSONArray(readJsonAsset(assets, "gtfs/stops/" + shapeId));
+        } catch (FileNotFoundException missingStops) {
+            return Collections.emptyList();
+        }
+
+        List<Parada> result = new ArrayList<>(stops.length());
+        for (int i = 0; i < stops.length(); i++) {
+            JSONArray stop = stops.getJSONArray(i);
+            String stopId = stop.getString(0);
+            int code;
+            try {
+                code = Integer.parseInt(stopId);
+            } catch (NumberFormatException ignored) {
+                code = 0;
+            }
+            String name = stop.getString(1);
+            double latitude = stop.getDouble(2);
+            double longitude = stop.getDouble(3);
+            result.add(new Parada(code, name, "", latitude, longitude));
+        }
+        return result;
+    }
+
+    private static String selectShapeId(JSONObject index, String route, int sentido,
+                                         String destination) throws Exception {
+        JSONArray entries = index.optJSONArray(route.trim());
+        if (entries == null || entries.length() == 0) return "";
+        if (entries.length() == 1) return entries.getJSONArray(0).getString(1);
+
+        String normalizedDestination = normalize(destination);
+        int bestMatchIndex = -1;
+        int bestScore = -1;
+        if (!normalizedDestination.isEmpty()) {
+            for (int i = 0; i < entries.length(); i++) {
+                JSONArray entry = entries.getJSONArray(i);
+                String normalizedHeadsign = normalize(entry.getString(0));
+                if (normalizedDestination.equals(normalizedHeadsign)) {
+                    bestMatchIndex = i;
+                    break;
+                }
+                if ((normalizedHeadsign.contains(normalizedDestination)
+                        || normalizedDestination.contains(normalizedHeadsign)) && bestScore < 2) {
+                    bestMatchIndex = i;
+                    bestScore = 2;
+                }
+            }
+        }
+        if (bestMatchIndex == -1) {
+            // Sentido SPTrans: 1 -> index 0 (direction_id 0), 2 -> index 1 (direction_id 1)
+            bestMatchIndex = sentido == 2 ? 1 : 0;
+            if (bestMatchIndex >= entries.length()) bestMatchIndex = 0;
+        }
+        return entries.getJSONArray(bestMatchIndex).getString(1);
     }
 }

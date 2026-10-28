@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.janioofi.olhovivosp'
+    namespace 'com.example.olhovivosp'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.janioofi.olhovivosp"
+        applicationId "com.example.olhovivosp"
         minSdk 24
         targetSdk 34
         versionCode 1

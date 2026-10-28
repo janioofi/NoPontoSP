@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Olho Vivo SP</string>
+    <string name="app_name">No Ponto SP</string>
     <string name="title_linha_detail">Detalhe da linha</string>
     <string name="title_mapa">Mapa em tempo real</string>
     <string name="title_parada_search">Buscar parada</string>
@@ -23,6 +23,8 @@
 
     <string name="hint_busca_linha">Buscar linha (nome ou número)</string>
     <string name="hint_busca_parada">Buscar parada (nome ou endereço)</string>
+    <string name="parada_search_header_title">Encontre seu ponto</string>
+    <string name="parada_search_header_subtitle">Pesquise pelo nome da parada ou por um endereço próximo.</string>
     <string name="btn_buscar">Buscar</string>
     <string name="btn_buscar_parada">Buscar parada</string>
     <string name="btn_ver_mapa">Ver no mapa</string>

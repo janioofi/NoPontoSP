@@ -1,6 +1,6 @@
-# OlhoVivoSP atualizado
+# No Ponto SP
 
-Projeto Android Java/XML reconstruído integralmente do código consolidado fornecido. Abra esta pasta no Android Studio. Consulte VALIDACAO.md para alterações, limitações e roteiro de testes.
+Aplicativo Android Java/XML para consultar linhas, paradas, previsões e posições de ônibus de São Paulo. O nome exibido é **No Ponto SP** e o identificador do app é `com.janioofi.nopontosp`. Abra esta pasta no Android Studio. Consulte VALIDACAO.md para alterações, limitações e roteiro de testes.
 
 Configure o SDK Android em local.properties. O token de desenvolvedor da API Olho Vivo é configurado dentro do app, pelo menu de configurações, e armazenado criptografado no dispositivo. O Gradle Wrapper binário não fazia parte do material fornecido e precisa ser restaurado ou gerado localmente.
 

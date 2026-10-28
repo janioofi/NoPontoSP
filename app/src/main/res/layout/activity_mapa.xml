@@ -8,7 +8,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/sp_trans_red"
+        android:background="@color/green_deep"
         app:navigationIcon="@drawable/ic_arrow_back"
         app:titleTextColor="@android:color/white"
         app:layout_constraintTop_toTopOf="parent" />
@@ -27,7 +27,7 @@
         android:layout_margin="16dp"
         android:contentDescription="@string/action_minha_localizacao"
         android:src="@drawable/ic_my_location"
-        app:backgroundTint="@color/sp_trans_red"
+        app:backgroundTint="@color/primary_teal"
         app:layout_constraintEnd_toEndOf="@id/mapView"
         app:layout_constraintTop_toTopOf="@id/mapView"
         app:tint="@android:color/white" />

@@ -1,4 +1,4 @@
-# No Ponto SP
+# NoPontoSP atualizado
 
 Aplicativo Android Java/XML para consultar linhas, paradas, previsões e posições de ônibus de São Paulo. O nome exibido é **No Ponto SP** e o identificador do app é `com.janioofi.nopontosp`. Abra esta pasta no Android Studio. Consulte VALIDACAO.md para alterações, limitações e roteiro de testes.
 

@@ -24,6 +24,10 @@
     <string name="legend_bus_stop">Ponto</string>
     <string name="legend_bus">Ônibus</string>
     <string name="legend_my_location">Você</string>
+    <string name="legend_route_start">Ponto inicial da rota</string>
+    <string name="legend_route_start_short">Início</string>
+    <string name="legend_route_end">Ponto final da rota</string>
+    <string name="legend_route_end_short">Final</string>
     <string name="hint_api_token">Token da API Olho Vivo</string>
     <string name="action_save_token">Salvar token</string>
     <string name="action_remove_token">Remover token salvo</string>

@@ -1,6 +1,13 @@
-"""Uso: python tools/build_gtfs.py /pasta/com/GTFS (somente biblioteca padrão)."""
-import csv,json,gzip,sys,pathlib,collections
-src=pathlib.Path(sys.argv[1]); out=pathlib.Path(__file__).resolve().parents[1]/'app/src/main/assets/gtfs';out.mkdir(parents=True,exist_ok=True)
+"""Gera os arquivos GTFS derivados (somente biblioteca padrão)."""
+import argparse,csv,json,gzip,pathlib,collections
+root=pathlib.Path(__file__).resolve().parents[1]
+parser=argparse.ArgumentParser(description='Gera os arquivos GTFS usados pelo app.')
+parser.add_argument('source',nargs='?',type=pathlib.Path,default=root/'app/src/main/assets/gtfs',help='pasta dos arquivos GTFS (padrão: app/src/main/assets/gtfs)')
+src=parser.parse_args().source
+required=['trips.txt','stops.txt','stop_times.txt','shapes1.txt','shapes2.txt','shapes3.txt']
+missing=[name for name in required if not (src/name).is_file()]
+if missing: parser.error(f'pasta GTFS inválida em {src}; arquivos ausentes: {", ".join(missing)}')
+out=root/'app/src/main/assets/gtfs';out.mkdir(parents=True,exist_ok=True)
 def rows(name):
  with (src/name).open(encoding='utf-8-sig',newline='') as f: yield from csv.DictReader(f)
 index=collections.defaultdict(list); needed=set()

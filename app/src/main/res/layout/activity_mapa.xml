@@ -109,6 +109,36 @@
             <ImageView
                 android:layout_width="18dp"
                 android:layout_height="18dp"
+                android:contentDescription="@string/legend_route_start"
+                android:src="@drawable/ic_route_start" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="14dp"
+                android:text="@string/legend_route_start_short"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:contentDescription="@string/legend_route_end"
+                android:src="@drawable/ic_route_end" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginRight="14dp"
+                android:text="@string/legend_route_end_short"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:contentDescription="@string/legend_bus"
                 android:src="@drawable/ic_bus" />
 

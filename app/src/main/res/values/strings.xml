@@ -12,6 +12,7 @@
     <string name="settings_api_title">Conectar à SPTrans</string>
     <string name="settings_api_description">Informe seu token de desenvolvedor Olho Vivo. Ele fica salvo de forma criptografada neste dispositivo.</string>
     <string name="settings_api_help_title">Como obter seu token</string>
+    <string name="settings_api_help_hide">Ocultar instruções</string>
     <string name="settings_api_steps">1. Toque em “Abrir portal oficial” abaixo.&#10;2. No site da SPTrans, acesse a área de Desenvolvedores e escolha “Cadastre-se” ou “Registrar-se”.&#10;3. Preencha o cadastro e confirme seu e-mail, se solicitado.&#10;4. Entre na sua conta e solicite o acesso à API Olho Vivo seguindo as instruções da área de desenvolvedores.&#10;5. Copie o token fornecido pela SPTrans, volte ao app, cole no campo abaixo e toque em “Salvar token”.</string>
     <string name="action_open_developer_portal">Abrir portal oficial</string>
     <string name="settings_api_note">Os nomes das opções no portal podem mudar. Use somente o site oficial da SPTrans e não compartilhe seu token.</string>
@@ -28,6 +29,15 @@
     <string name="legend_route_start_short">Início</string>
     <string name="legend_route_end">Ponto final da rota</string>
     <string name="legend_route_end_short">Final</string>
+    <string name="show_route_stops">Mostrar pontos de ônibus</string>
+    <string name="map_show_details">Ver chegadas</string>
+    <string name="map_hide_details">Ocultar chegadas</string>
+    <string name="map_options">Opções do mapa</string>
+    <string name="map_hide_options">Fechar opções</string>
+    <string name="map_attribution_dark">© OpenStreetMap contributors © CARTO</string>
+    <string name="accessible_vehicle">Veículo acessível</string>
+    <string name="map_selected_vehicle">Ônibus selecionado</string>
+    <string name="format_prefixo_veiculo">Prefixo %1$s</string>
     <string name="hint_api_token">Token da API Olho Vivo</string>
     <string name="action_save_token">Salvar token</string>
     <string name="action_remove_token">Remover token salvo</string>
@@ -44,6 +54,9 @@
     <string name="parada_search_header_subtitle">Pesquise pelo nome da parada ou por um endereço próximo.</string>
     <string name="btn_buscar">Buscar</string>
     <string name="btn_buscar_parada">Buscar parada</string>
+    <string name="tab_lines">Linhas</string>
+    <string name="tab_stops">Paradas</string>
+    <string name="action_open_stop">Abrir parada</string>
     <string name="btn_ver_mapa">Ver no mapa</string>
 
     <string name="format_sentido_destino">Destino: %1$s</string>

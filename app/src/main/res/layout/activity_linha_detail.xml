@@ -19,39 +19,50 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp">
 
-        <TextView
-            android:id="@+id/textLetreiro"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/text_primary"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            tools:text="8000-10" />
+            android:background="@drawable/route_summary_card"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/textLetreiro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                tools:text="8000-10" />
+
+            <TextView
+                android:id="@+id/textDestinoSentido"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                tools:text="Destino: Term. Pinheiros" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnVerMapa"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="@color/primary_teal"
+                android:textColor="@color/button_text"
+                android:text="@string/btn_ver_mapa" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/textDestinoSentido"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/text_secondary"
-            android:textSize="14sp"
-            tools:text="Destino: Term. Pinheiros" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnVerMapa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:backgroundTint="@color/primary_teal"
-            android:textColor="@color/button_text"
-            android:text="@string/btn_ver_mapa" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:text="@string/label_paradas"
             android:textColor="@color/text_primary"
             android:textSize="16sp"

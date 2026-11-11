@@ -1,5 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/action_favorites"
+        android:icon="@drawable/ic_star_filled"
+        android:title="@string/menu_favorites" />
+    <item
+        android:id="@+id/action_nearby_stops"
+        android:icon="@drawable/ic_bus_stop"
+        android:title="@string/menu_nearby_stops" />
+    <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_settings"
         android:title="@string/menu_settings" />

@@ -132,6 +132,16 @@
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnProximityAlert"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/alert_nearby"
+                android:textAllCaps="false"
+                android:visibility="gone" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerPrevisoes"
                 android:layout_width="match_parent"

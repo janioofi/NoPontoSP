@@ -4,8 +4,16 @@ root=pathlib.Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser(description='Gera os arquivos GTFS usados pelo app.')
 parser.add_argument('source',nargs='?',type=pathlib.Path,default=root/'app/src/main/assets/gtfs',help='pasta dos arquivos GTFS (padrão: app/src/main/assets/gtfs)')
 src=parser.parse_args().source
-required=['trips.txt','stops.txt','stop_times.txt','shapes1.txt','shapes2.txt','shapes3.txt']
+required=['trips.txt','stops.txt','stop_times.txt']
 missing=[name for name in required if not (src/name).is_file()]
+legacy_shapes=['shapes1.txt','shapes2.txt','shapes3.txt']
+if (src/'shapes.txt').is_file():
+ shape_files=['shapes.txt']
+elif all((src/name).is_file() for name in legacy_shapes):
+ shape_files=legacy_shapes
+else:
+ missing.append('shapes.txt (ou shapes1.txt, shapes2.txt e shapes3.txt)')
+ shape_files=[]
 if missing: parser.error(f'pasta GTFS inválida em {src}; arquivos ausentes: {", ".join(missing)}')
 out=root/'app/src/main/assets/gtfs';out.mkdir(parents=True,exist_ok=True)
 def rows(name):
@@ -18,9 +26,9 @@ for r in rows('trips.txt'):
  needed.add(r['shape_id'])
  trip_by_shape.setdefault(r['shape_id'],r['trip_id'])
 shapes=collections.defaultdict(dict)
-for name in ['shapes1.txt','shapes2.txt','shapes3.txt']:
+for name in shape_files:
  with (src/name).open(encoding='utf-8-sig',newline='') as stream:
-  data=csv.DictReader(stream) if name=='shapes1.txt' else csv.DictReader(stream,fieldnames=['shape_id','shape_pt_lat','shape_pt_lon','shape_pt_sequence','shape_dist_traveled'])
+  data=csv.DictReader(stream) if name=='shapes.txt' or name=='shapes1.txt' else csv.DictReader(stream,fieldnames=['shape_id','shape_pt_lat','shape_pt_lon','shape_pt_sequence','shape_dist_traveled'])
   for r in data:
    if r['shape_id'] in needed: shapes[r['shape_id']][int(r['shape_pt_sequence'])]=[float(r['shape_pt_lat']),float(r['shape_pt_lon'])]
 for sid,pts in shapes.items():

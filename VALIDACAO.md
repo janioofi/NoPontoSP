@@ -23,3 +23,6 @@ Não houve teste de renderização em dispositivo/emulador nem teste real da API
 Teste no aparelho: salvar/remover o token; buscar 8400 e abrir ambos os sentidos; confirmar os pontos de parada; abrir ponto com e sem previsão; conferir 20/21/40/41 resultados e navegação de páginas; negar/conceder GPS; sair/voltar ao mapa; simular rede lenta e erro HTTP.
 
 Os dados GTFS representam o arquivo fornecido, não desvios em tempo real. Nomes sem correspondência exata normalizada ocultam o trajeto por segurança. O token salvo fica cifrado no armazenamento privado do dispositivo; como qualquer segredo usado por um app cliente, um dispositivo comprometido ainda pode expô-lo.
+
+## Distribuição dos dados
+O GTFS e a API Olho Vivo são fornecidos pela SPTrans. A documentação pública consultada não basta para concluir que os dados podem ser redistribuídos no repositório ou dentro de um APK. Verifique os termos atuais antes de publicar os arquivos GTFS originais ou derivados. Para compilar localmente sem redistribuí-los, obtenha o feed diretamente da SPTrans e siga as instruções da seção “Dados da SPTrans (GTFS e API Olho Vivo)” no README. O código-fonte e os dados têm licenças/termos distintos.

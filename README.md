@@ -8,6 +8,15 @@ Linhas e paradas podem ser salvas pelos botões de favorito; os itens ficam no d
 
 Para compartilhar a versão de release, use `app/build/outputs/apk/release/app-release.apk`. A chave `app/no-pontosp-release-key.jks` e as propriedades de assinatura em `local.properties` são privadas, ficam fora do controle de versão e devem ser mantidas em backup seguro: são necessárias para publicar atualizações que possam ser instaladas sobre esta versão.
 
-Os dados GTFS usados no mapa ficam em `app/src/main/assets/gtfs`. O `index.json` é um índice pequeno que relaciona o identificador da linha (`route_id`) ao destino (`trip_headsign`) e ao identificador da geometria (`shape_id`); não contém os pontos da rota. Cada arquivo `<shape_id>.json.gz` guarda as coordenadas da rota, e `stops/<shape_id>.json.gz` guarda os pontos de ônibus ordenados daquela viagem. As tabelas `stops.txt`, `stop_times.txt` e `trips.txt` são usadas para gerar esses marcadores locais, sem depender de a API retornar todas as paradas.
+## Dados da SPTrans (GTFS e API Olho Vivo)
 
-Para atualizar os arquivos derivados a partir do GTFS, execute `python tools/build_gtfs.py`. O script aceita o arquivo padrão `shapes.txt` ou o formato dividido legado (`shapes1.txt`, `shapes2.txt` e `shapes3.txt`). Por padrão, lê `app/src/main/assets/gtfs`; para usar outra pasta, informe seu caminho, por exemplo `python tools/build_gtfs.py "C:\dados\GTFS"`.
+A SPTrans disponibiliza o GTFS e a API Olho Vivo para desenvolvedores. A documentação consultada descreve os serviços e o cadastro de aplicativos, mas não estabelece, por si só, uma licença explícita para republicar o conjunto de dados. A licença deste código não concede direitos sobre dados da SPTrans. Antes de redistribuir o GTFS ou seus derivados (inclusive arquivos `.json.gz`) em um fork, APK ou outro serviço, consulte os termos atuais de download e uso da SPTrans e confirme que a redistribuição é permitida. Na ausência de autorização clara, obtenha os dados diretamente da SPTrans e não os adicione ao repositório.
+
+Para preparar os recursos localmente, baixe e extraia o GTFS oficial em uma pasta fora de `app/src/main/assets`, com `trips.txt`, `stops.txt`, `stop_times.txt` e `shapes.txt` (ou `shapes1.txt`, `shapes2.txt` e `shapes3.txt`). Execute, na raiz do projeto:
+
+```powershell
+python tools\build_gtfs.py "C:\caminho\para\gtfs"
+Copy-Item "C:\caminho\para\gtfs\stops.txt" "app\src\main\assets\gtfs\stops.txt" -Force
+```
+
+O gerador grava os recursos derivados em `app/src/main/assets/gtfs`: `index.json` relaciona linha, destino e geometria; `<shape_id>.json.gz` armazena as coordenadas da rota; e `stops/<shape_id>.json.gz` contém as paradas ordenadas. `stops.txt` também é necessário para a tela Pontos próximos. Os recursos podem ser mantidos localmente para compilar e testar; só os publique depois de verificar os termos aplicáveis. Não inclua seu token pessoal da API Olho Vivo no código ou no repositório: cada pessoa deve configurar o próprio token no app.

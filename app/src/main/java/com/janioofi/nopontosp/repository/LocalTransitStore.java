@@ -165,6 +165,18 @@ public final class LocalTransitStore {
         return result;
     }
 
+    public static void clearRecentSearches(Context context, String type) {
+        JSONArray rows = readArray(context, HISTORY);
+        JSONArray updated = new JSONArray();
+        for (int i = 0; i < rows.length(); i++) {
+            JSONObject item = rows.optJSONObject(i);
+            if (item != null && !type.equals(item.optString("type"))) {
+                updated.put(item);
+            }
+        }
+        prefs(context).edit().putString(HISTORY, updated.toString()).apply();
+    }
+
     private static JSONObject historyItem(String type, String query) {
         JSONObject item = new JSONObject();
         try {

@@ -42,13 +42,6 @@
             android:parentActivityName=".ui.LinhaDetailActivity" />
 
         <activity
-            android:name=".ui.ParadaSearchActivity"
-            android:exported="false"
-            android:label="@string/title_parada_search"
-            android:windowSoftInputMode="adjustResize"
-            android:parentActivityName=".ui.MainActivity" />
-
-        <activity
             android:name=".ui.FavoritesActivity"
             android:exported="false"
             android:label="@string/menu_favorites"
@@ -58,6 +51,18 @@
             android:name=".ui.NearbyStopsActivity"
             android:exported="false"
             android:label="@string/menu_nearby_stops"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.StopScheduleActivity"
+            android:exported="false"
+            android:label="@string/title_stop_schedule"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.TimetableActivity"
+            android:exported="false"
+            android:label="@string/title_timetable"
             android:parentActivityName=".ui.MainActivity" />
 
         <activity

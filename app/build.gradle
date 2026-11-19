@@ -18,8 +18,8 @@ android {
         applicationId "com.janioofi.nopontosp"
         minSdk 24
         targetSdk 34
-        versionCode 10
-        versionName "2.9"
+        versionCode 19
+        versionName "2.18"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

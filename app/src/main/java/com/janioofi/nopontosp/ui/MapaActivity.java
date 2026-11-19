@@ -245,8 +245,11 @@ public class MapaActivity extends AppCompatActivity {
             List<GeoPoint> points = java.util.Collections.emptyList();
             List<Parada> stops = java.util.Collections.emptyList();
             String stopsError = null;
+            boolean exactDirection = false;
             try {
                 points = com.janioofi.nopontosp.repository.GtfsGeometry.load(getAssets(), route, sentido, destinoSentido);
+                exactDirection = com.janioofi.nopontosp.repository.GtfsGeometry.hasExactDirection(
+                        getAssets(), route, sentido, destinoSentido);
             } catch (Exception error) {
                 android.util.Log.e("MapaActivity", "Não foi possível carregar a geometria GTFS.", error);
             }
@@ -260,6 +263,7 @@ public class MapaActivity extends AppCompatActivity {
             final List<GeoPoint> geometry = points;
             final List<Parada> routeStops = stops;
             final String routeStopsError = stopsError;
+            final boolean hasExactDirection = exactDirection;
             runOnUiThread(() -> {
                 if (isFinishing() || isDestroyed()) return;
                 if (geometry.size() < 2) {
@@ -271,19 +275,25 @@ public class MapaActivity extends AppCompatActivity {
                 trajetoOverlay.setColor(ContextCompat.getColor(this, R.color.primary_teal));
                 trajetoOverlay.setWidth(8f);
                 binding.mapView.getOverlays().add(1, trajetoOverlay);
-                binding.textInfoTrajeto.setText("Trajeto GTFS • sentido selecionado");
+                binding.textInfoTrajeto.setText(hasExactDirection
+                        ? R.string.msg_trajeto_sentido_exato
+                        : R.string.msg_trajeto_sentido_aproximado);
                 if (!cameraAjustada) {
                     binding.mapView.zoomToBoundingBox(BoundingBox.fromGeoPoints(geometry), true, 80);
                     cameraAjustada = true;
                 }
-                carregarParadasDaRota(routeStops, routeStopsError, geometry);
+                carregarParadasDaRota(routeStops, routeStopsError, geometry, hasExactDirection);
                 binding.mapView.invalidate();
             });
         });
     }
 
     private void carregarParadasDaRota(List<Parada> paradas, String error,
-                                       List<GeoPoint> geometry) {
+                                       List<GeoPoint> geometry, boolean exactDirection) {
+        if (!exactDirection) {
+            binding.textInfoTrajeto.setText(R.string.msg_trajeto_sentido_e_paradas_aproximados);
+            return;
+        }
         List<Parada> validStops = new ArrayList<>();
         for (Parada parada : paradas) {
             if (!Double.isFinite(parada.latitude) || !Double.isFinite(parada.longitude)

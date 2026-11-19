@@ -10,13 +10,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.janioofi.nopontosp.R;
 import com.janioofi.nopontosp.databinding.ActivityLinhaDetailBinding;
 import com.janioofi.nopontosp.domain.Parada;
-import com.janioofi.nopontosp.repository.OlhoVivoRepository;
-import com.janioofi.nopontosp.repository.RepositoryCallback;
+import com.janioofi.nopontosp.repository.GtfsGeometry;
 import com.janioofi.nopontosp.ui.adapters.ParadaAdapter;
 
 import java.util.List;
 
-/** Mostra os terminais da linha selecionada e seus pontos de parada (GET /Parada/BuscarParadasPorLinha). */
+/** Mostra os terminais e as paradas GTFS do sentido selecionado. */
 public class LinhaDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_CODIGO_LINHA = "extra_codigo_linha";
@@ -27,7 +26,6 @@ public class LinhaDetailActivity extends AppCompatActivity {
     private ActivityLinhaDetailBinding binding;
     private ParadaAdapter adapter;
     private PageController<Parada> pager;
-    private OlhoVivoRepository repository;
 
     private int codigoLinha;
     private int sentido;
@@ -38,7 +36,6 @@ public class LinhaDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLinhaDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        repository = OlhoVivoRepository.getInstance(this);
 
         codigoLinha = getIntent().getIntExtra(EXTRA_CODIGO_LINHA, -1);
         sentido = getIntent().getIntExtra(EXTRA_SENTIDO, -1);
@@ -65,33 +62,36 @@ public class LinhaDetailActivity extends AppCompatActivity {
     }
 
     private void carregarParadas() {
-        if (codigoLinha == -1) {
-            mostrarMensagem(getString(R.string.msg_erro_rede));
+        if (letreiro == null || letreiro.trim().isEmpty()) {
+            mostrarMensagem(getString(R.string.msg_paradas_sentido_indisponiveis));
             return;
         }
         binding.progressBar.setVisibility(View.VISIBLE);
-        repository.buscarParadasPorLinha(codigoLinha, new RepositoryCallback<List<Parada>>() {
-            @Override
-            public void onSuccess(List<Parada> result) {
+        String destination = getIntent().getStringExtra(EXTRA_DESTINO_SENTIDO);
+        new Thread(() -> {
+            try {
+                List<Parada> result = GtfsGeometry.loadStops(
+                        getAssets(), letreiro, sentido, destination);
                 runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed()) return;
                     binding.progressBar.setVisibility(View.GONE);
                     pager.setItems(result);
                     if (result.isEmpty()) {
-                        mostrarMensagem(getString(R.string.msg_sem_resultados));
+                        mostrarMensagem(getString(R.string.msg_paradas_sentido_indisponiveis));
                     } else {
                         esconderMensagem();
                     }
                 });
-            }
-
-            @Override
-            public void onError(String message) {
+            } catch (Exception error) {
+                android.util.Log.e("LinhaDetailActivity",
+                        "Não foi possível carregar as paradas GTFS do sentido.", error);
                 runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed()) return;
                     binding.progressBar.setVisibility(View.GONE);
-                    mostrarMensagem(message);
+                    mostrarMensagem(getString(R.string.msg_paradas_sentido_indisponiveis));
                 });
             }
-        });
+        }, "gtfs-stops-direction").start();
     }
 
     private void abrirMapa() {

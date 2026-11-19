@@ -20,8 +20,14 @@ public final class PageController<T> {
     private final MaterialButton previous, next;
     private final TextView label;
     private final RecyclerView recycler;
+    private final int pageSize;
     public PageController(RecyclerView recycler, Consumer<List<T>> submit) {
+        this(recycler, submit, PAGE_SIZE);
+    }
+    public PageController(RecyclerView recycler, Consumer<List<T>> submit, int pageSize) {
+        if (pageSize < 1) throw new IllegalArgumentException("pageSize must be positive");
         this.recycler = recycler; this.submit = submit;
+        this.pageSize = pageSize;
         android.content.Context context = recycler.getContext();
         bar = new LinearLayout(context); bar.setGravity(Gravity.CENTER);
         int primary = androidx.core.content.ContextCompat.getColor(context, com.janioofi.nopontosp.R.color.primary_teal);
@@ -49,11 +55,11 @@ public final class PageController<T> {
         page = 0; render();
     }
     private void render() {
-        int start = page * PAGE_SIZE;
-        submit.accept(new ArrayList<>(items.subList(start, Math.min(start + PAGE_SIZE, items.size()))));
-        previous.setEnabled(page > 0); next.setEnabled(start + PAGE_SIZE < items.size());
-        label.setText((page + 1) + " de " + Math.max(1, (items.size() + PAGE_SIZE - 1) / PAGE_SIZE));
-        bar.setVisibility(items.size() > PAGE_SIZE ? android.view.View.VISIBLE : android.view.View.GONE);
+        int start = page * pageSize;
+        submit.accept(new ArrayList<>(items.subList(start, Math.min(start + pageSize, items.size()))));
+        previous.setEnabled(page > 0); next.setEnabled(start + pageSize < items.size());
+        label.setText((page + 1) + " de " + Math.max(1, (items.size() + pageSize - 1) / pageSize));
+        bar.setVisibility(items.size() > pageSize ? android.view.View.VISIBLE : android.view.View.GONE);
         recycler.scrollToPosition(0);
     }
 

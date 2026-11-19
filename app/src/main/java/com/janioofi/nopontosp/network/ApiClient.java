@@ -24,9 +24,9 @@ public final class ApiClient {
 
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .cookieJar(cookieJar)
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
+                .connectTimeout(2, TimeUnit.SECONDS)
+                .readTimeout(4, TimeUnit.SECONDS)
+                .writeTimeout(4, TimeUnit.SECONDS)
                 .build();
 
         Retrofit retrofit = new Retrofit.Builder()

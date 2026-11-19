@@ -70,6 +70,7 @@
             android:background="@color/surface_white"
             app:tabIndicatorColor="@color/primary_teal"
             app:tabIndicatorFullWidth="true"
+            app:tabMode="scrollable"
             app:tabSelectedTextColor="@color/primary_teal"
             app:tabTextColor="@color/text_secondary" />
 
@@ -143,12 +144,39 @@
                 android:textAllCaps="false" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/recent_searches"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnClearLineSearchHistory"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="@string/action_clear_history"
+                android:textAllCaps="false"
+                android:visibility="gone" />
+        </LinearLayout>
+
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/recentLineSearches"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
+            android:visibility="gone"
             app:singleLine="true" />
 
         <ProgressBar

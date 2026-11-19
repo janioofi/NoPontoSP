@@ -8,6 +8,14 @@
         android:icon="@drawable/ic_bus_stop"
         android:title="@string/menu_nearby_stops" />
     <item
+        android:id="@+id/action_stop_schedules"
+        android:icon="@drawable/ic_bus_stop"
+        android:title="@string/menu_stop_schedules" />
+    <item
+        android:id="@+id/action_timetable"
+        android:icon="@drawable/ic_bus"
+        android:title="@string/menu_timetable" />
+    <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_settings"
         android:title="@string/menu_settings" />

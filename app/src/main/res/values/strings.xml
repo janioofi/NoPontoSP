@@ -3,8 +3,9 @@
     <string name="app_name">No Ponto SP</string>
     <string name="title_linha_detail">Detalhe da linha</string>
     <string name="title_mapa">Mapa em tempo real</string>
-    <string name="title_parada_search">Buscar parada</string>
     <string name="title_settings">Configurações</string>
+    <string name="title_stop_schedule">Pontos e horários</string>
+    <string name="title_timetable">Itinerários e partidas</string>
     <string name="menu_settings">Tema e configurações</string>
     <string name="home_header_title">Seu caminho, em tempo real</string>
     <string name="home_header_subtitle">Encontre linhas, pontos e acompanhe os ônibus de São Paulo.</string>
@@ -40,6 +41,8 @@
     <string name="format_prefixo_veiculo">Prefixo %1$s</string>
     <string name="menu_favorites">Favoritos</string>
     <string name="menu_nearby_stops">Pontos próximos</string>
+    <string name="menu_stop_schedules">Pontos e horários</string>
+    <string name="menu_timetable">Itinerários e horários</string>
     <string name="action_add_favorite">Adicionar aos favoritos</string>
     <string name="action_remove_favorite">Remover dos favoritos</string>
     <string name="favorites_lines">Linhas favoritas</string>
@@ -55,6 +58,7 @@
     <string name="nearby_result_count">Toque em um ponto para ver as previsões ao vivo.</string>
     <string name="nearby_data_error">Não foi possível carregar os pontos salvos neste app.</string>
     <string name="recent_searches">Buscas recentes</string>
+    <string name="action_clear_history">Limpar</string>
     <string name="action_show_nearby">Pontos próximos</string>
     <string name="alert_nearby">Avise quando o ônibus se aproximar</string>
     <string name="alert_active">Alerta ativo: aviso quando um ônibus chegar a 500 m do ponto.</string>
@@ -86,13 +90,10 @@
     <string name="msg_token_removed">Token removido.</string>
 
     <string name="hint_busca_linha">Buscar linha (nome ou número)</string>
-    <string name="hint_busca_parada">Buscar parada (nome ou endereço)</string>
-    <string name="parada_search_header_title">Encontre seu ponto</string>
-    <string name="parada_search_header_subtitle">Pesquise pelo nome da parada ou por um endereço próximo.</string>
     <string name="btn_buscar">Buscar</string>
-    <string name="btn_buscar_parada">Buscar parada</string>
     <string name="tab_lines">Linhas</string>
-    <string name="tab_stops">Paradas</string>
+    <string name="tab_stop_schedules">Pontos</string>
+    <string name="tab_timetable">Itinerários</string>
     <string name="action_open_stop">Abrir parada</string>
     <string name="btn_ver_mapa">Ver no mapa</string>
 
@@ -109,10 +110,50 @@
     <string name="msg_sem_veiculos_linha">Nenhum ônibus localizado nesta linha no momento.</string>
     <string name="msg_trajeto_aproximado">Trajeto real da linha conforme o GTFS.</string>
     <string name="msg_trajeto_indisponivel">Não foi possível carregar o trajeto da linha.</string>
+    <string name="msg_trajeto_sentido_exato">Trajeto e pontos conforme o GTFS para este sentido.</string>
+    <string name="msg_trajeto_sentido_aproximado">Trajeto do sentido oposto exibido como referência.</string>
+    <string name="msg_trajeto_sentido_e_paradas_aproximados">Trajeto do sentido oposto exibido como referência; os pontos deste sentido não existem no GTFS carregado.</string>
+    <string name="msg_paradas_sentido_indisponiveis">Os pontos deste sentido não estão disponíveis no GTFS carregado. Atualize os dados para evitar mostrar paradas do sentido oposto.</string>
+    <string name="msg_gtfs_paradas_sentido_indisponiveis">Os pontos deste sentido não estão disponíveis no GTFS carregado. Atualize os dados para evitar mostrar paradas do sentido oposto.</string>
     <string name="msg_localizacao_indisponivel">Localização indisponível. Verifique a permissão e o GPS do aparelho.</string>
     <string name="action_minha_localizacao">Centralizar na minha localização</string>
     <string name="msg_previsao_indisponivel">Previsão indisponível para esta parada no momento.</string>
 
     <string name="format_previsao_item">%1$s — chegada prevista às %2$s</string>
     <string name="format_veiculo_count">%1$d veículo(s) em circulação</string>
+
+    <string name="gtfs_tap_stop">Toque em um ponto no mapa</string>
+    <string name="gtfs_zoom_map_hint">Aproxime o mapa para visualizar e selecionar os pontos.</string>
+    <string name="gtfs_schedule_notice">Horários programados do GTFS; não são previsões em tempo real.</string>
+    <string name="gtfs_data_error">Não foi possível carregar os horários locais. Tente novamente mais tarde.</string>
+    <string name="gtfs_all_routes">Todas as linhas neste ponto</string>
+    <string name="gtfs_no_upcoming_arrivals">Não há passagens programadas restantes para hoje nesta seleção.</string>
+    <string name="gtfs_arrivals_count">%1$d passagem(ns) programada(s) restante(s), em ordem de horário</string>
+    <string name="gtfs_arrival_direction">%1$s → %2$s</string>
+    <string name="gtfs_departure_direction">%1$s → %2$s</string>
+    <string name="gtfs_arrival_at_stop">Passagem programada em %1$s</string>
+    <string name="gtfs_departure_long_name">Itinerário: %1$s</string>
+    <string name="gtfs_timetable_intro">Consulte partidas por linha, tipo de dia, sentido e período. Feriados usam a grade de domingo, pois o GTFS não inclui exceções de calendário.</string>
+    <string name="gtfs_search_route">Buscar linha ou destino</string>
+    <string name="gtfs_select_service_day">Tipo de dia</string>
+    <string name="gtfs_select_direction">Origem e destino</string>
+    <string name="gtfs_choose_route">Escolha uma linha para consultar os horários.</string>
+    <string name="gtfs_no_directions">Não há sentidos cadastrados para esta linha.</string>
+    <string name="gtfs_no_departures">Não há partidas para este sentido, dia e período.</string>
+    <string name="gtfs_departures_count">%1$d partida(s) programada(s), ordenadas por horário</string>
+    <string name="gtfs_route_selection_error">Não foi possível identificar a linha selecionada. Selecione uma sugestão da lista.</string>
+    <string name="gtfs_route_no_departures">A linha %1$s não tem partidas neste sentido, dia e período.</string>
+    <string name="gtfs_route_departures_count">Linha %1$s · %2$d partidas programadas, ordenadas por horário</string>
+    <string name="gtfs_period_all">Todos</string>
+    <string name="gtfs_period_dawn">Madrugada</string>
+    <string name="gtfs_period_morning">Manhã</string>
+    <string name="gtfs_period_afternoon">Tarde</string>
+    <string name="gtfs_period_evening">Noite</string>
+
+    <string-array name="gtfs_service_days">
+        <item>Dia útil (segunda a sexta)</item>
+        <item>Sábado</item>
+        <item>Domingo</item>
+        <item>Feriado (grade de domingo)</item>
+    </string-array>
 </resources>

@@ -27,6 +27,16 @@ public final class GtfsGeometry {
 
     private GtfsGeometry() {}
 
+    private static final class EntrySelection {
+        final JSONArray entry;
+        final boolean exactDirection;
+
+        EntrySelection(JSONArray entry, boolean exactDirection) {
+            this.entry = entry;
+            this.exactDirection = exactDirection;
+        }
+    }
+
     private static String read(InputStream input) throws IOException {
         try (InputStream in = input; ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[8192];
@@ -82,8 +92,10 @@ public final class GtfsGeometry {
         if (route == null || route.trim().isEmpty()) return Collections.emptyList();
 
         JSONObject index = new JSONObject(read(assets.open("gtfs/index.json")));
-        String selectedShapeId = selectShapeId(index, route, sentido, destination);
-        if (selectedShapeId.isEmpty()) return Collections.emptyList();
+        EntrySelection selection = selectEntry(index, route, sentido, destination, true);
+        if (selection == null) return Collections.emptyList();
+        JSONArray selectedEntry = selection.entry;
+        String selectedShapeId = selectedEntry.getString(1);
 
         JSONArray points;
         try {
@@ -97,7 +109,17 @@ public final class GtfsGeometry {
             JSONArray pair = points.getJSONArray(i);
             result.add(new GeoPoint(pair.getDouble(0), pair.getDouble(1)));
         }
+        if (!selection.exactDirection && isReverseDirectionFallback(selectedEntry, sentido)) {
+            Collections.reverse(result);
+        }
         return result;
+    }
+
+    public static boolean hasExactDirection(AssetManager assets, String route, int sentido,
+                                            String destination) throws Exception {
+        if (route == null || route.trim().isEmpty()) return false;
+        JSONObject index = new JSONObject(read(assets.open("gtfs/index.json")));
+        return selectEntry(index, route, sentido, destination, false) != null;
     }
 
     public static List<Parada> loadStops(AssetManager assets, String route, int sentido,
@@ -105,12 +127,19 @@ public final class GtfsGeometry {
         if (route == null || route.trim().isEmpty()) return Collections.emptyList();
 
         JSONObject index = new JSONObject(read(assets.open("gtfs/index.json")));
-        String shapeId = selectShapeId(index, route, sentido, destination);
-        if (shapeId.isEmpty()) return Collections.emptyList();
+        EntrySelection selection = selectEntry(index, route, sentido, destination, false);
+        if (selection == null) return Collections.emptyList();
+        JSONArray selectedEntry = selection.entry;
 
         JSONArray stops;
         try {
-            stops = new JSONArray(readJsonAsset(assets, "gtfs/stops/" + shapeId));
+            String tripId = selectedEntry.optString(3, "");
+            if (!tripId.isEmpty()) {
+                stops = new JSONArray(readJsonAsset(assets, "gtfs/stops_by_trip/" + tripId));
+            } else {
+                stops = new JSONArray(readJsonAsset(
+                        assets, "gtfs/stops/" + selectedEntry.getString(1)));
+            }
         } catch (FileNotFoundException missingStops) {
             return Collections.emptyList();
         }
@@ -133,35 +162,73 @@ public final class GtfsGeometry {
         return result;
     }
 
-    private static String selectShapeId(JSONObject index, String route, int sentido,
-                                         String destination) throws Exception {
+    private static EntrySelection selectEntry(JSONObject index, String route, int sentido,
+                                               String destination, boolean allowSingleFallback)
+            throws Exception {
         JSONArray entries = index.optJSONArray(route.trim());
-        if (entries == null || entries.length() == 0) return "";
-        if (entries.length() == 1) return entries.getJSONArray(0).getString(1);
+        if (entries == null || entries.length() == 0) return null;
 
         String normalizedDestination = normalize(destination);
         int bestMatchIndex = -1;
-        int bestScore = -1;
+        int bestScore = 0;
         if (!normalizedDestination.isEmpty()) {
             for (int i = 0; i < entries.length(); i++) {
                 JSONArray entry = entries.getJSONArray(i);
                 String normalizedHeadsign = normalize(entry.getString(0));
                 if (normalizedDestination.equals(normalizedHeadsign)) {
                     bestMatchIndex = i;
+                    bestScore = Integer.MAX_VALUE;
                     break;
                 }
-                if ((normalizedHeadsign.contains(normalizedDestination)
-                        || normalizedDestination.contains(normalizedHeadsign)) && bestScore < 2) {
+                if (!normalizedHeadsign.isEmpty()
+                        && (normalizedHeadsign.contains(normalizedDestination)
+                        || normalizedDestination.contains(normalizedHeadsign))
+                        && normalizedHeadsign.length() > bestScore) {
                     bestMatchIndex = i;
-                    bestScore = 2;
+                    bestScore = normalizedHeadsign.length();
                 }
             }
         }
-        if (bestMatchIndex == -1) {
-            // Sentido SPTrans: 1 -> index 0 (direction_id 0), 2 -> index 1 (direction_id 1)
-            bestMatchIndex = sentido == 2 ? 1 : 0;
-            if (bestMatchIndex >= entries.length()) bestMatchIndex = 0;
+
+        if (bestMatchIndex >= 0) {
+            return new EntrySelection(entries.getJSONArray(bestMatchIndex), true);
         }
-        return entries.getJSONArray(bestMatchIndex).getString(1);
+
+        String expectedDirectionId = sentido == 1 ? "0" : sentido == 2 ? "1" : "";
+        if (!expectedDirectionId.isEmpty()) {
+            for (int i = 0; i < entries.length(); i++) {
+                JSONArray entry = entries.getJSONArray(i);
+                if (entry.length() > 2 && expectedDirectionId.equals(entry.optString(2))) {
+                    return new EntrySelection(entry, true);
+                }
+            }
+            boolean usesLegacyIndex = true;
+            for (int i = 0; i < entries.length(); i++) {
+                if (entries.getJSONArray(i).length() > 2) {
+                    usesLegacyIndex = false;
+                    break;
+                }
+            }
+            // Legacy indexes have no direction_id; use their order only when both exist.
+            if (usesLegacyIndex && entries.length() >= 2 && sentido >= 1 && sentido <= 2) {
+                int legacyIndex = sentido == 2 ? 1 : 0;
+                return new EntrySelection(entries.getJSONArray(legacyIndex), true);
+            }
+        }
+        if (allowSingleFallback && entries.length() == 1) {
+            return new EntrySelection(entries.getJSONArray(0), false);
+        }
+        return null;
+    }
+
+    private static boolean isReverseDirectionFallback(JSONArray entry, int sentido)
+            throws Exception {
+        if (sentido != 1 && sentido != 2) return false;
+        String expectedDirectionId = sentido == 1 ? "0" : "1";
+        String entryDirectionId = entry.optString(2, "");
+        if (!entryDirectionId.isEmpty()) {
+            return !expectedDirectionId.equals(entryDirectionId);
+        }
+        return sentido == 2;
     }
 }

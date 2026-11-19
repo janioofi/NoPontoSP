@@ -57,6 +57,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, NearbyStopsActivity.class));
                 return true;
             }
+            if (item.getItemId() == R.id.action_stop_schedules) {
+                binding.drawerLayout.closeDrawer(GravityCompat.START);
+                startActivity(new Intent(this, StopScheduleActivity.class));
+                return true;
+            }
+            if (item.getItemId() == R.id.action_timetable) {
+                binding.drawerLayout.closeDrawer(GravityCompat.START);
+                startActivity(new Intent(this, TimetableActivity.class));
+                return true;
+            }
             return false;
         });
 
@@ -79,12 +89,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         binding.searchTabs.addTab(binding.searchTabs.newTab().setText(R.string.tab_lines));
-        binding.searchTabs.addTab(binding.searchTabs.newTab().setText(R.string.tab_stops));
+        binding.searchTabs.addTab(binding.searchTabs.newTab().setText(R.string.tab_stop_schedules));
+        binding.searchTabs.addTab(binding.searchTabs.newTab().setText(R.string.tab_timetable));
         binding.searchTabs.addOnTabSelectedListener(new com.google.android.material.tabs.TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(com.google.android.material.tabs.TabLayout.Tab tab) {
                 if (tab.getPosition() == 1) {
-                    startActivity(new Intent(MainActivity.this, ParadaSearchActivity.class));
+                    startActivity(new Intent(MainActivity.this, StopScheduleActivity.class));
+                } else if (tab.getPosition() == 2) {
+                    startActivity(new Intent(MainActivity.this, TimetableActivity.class));
                 }
             }
 
@@ -98,12 +111,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, FavoritesActivity.class)));
         binding.btnNearbyStops.setOnClickListener(v ->
                 startActivity(new Intent(this, NearbyStopsActivity.class)));
+        binding.btnClearLineSearchHistory.setOnClickListener(v -> {
+            LocalTransitStore.clearRecentSearches(this, LocalTransitStore.TYPE_LINE);
+            renderSearchHistory();
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (binding.searchTabs.getSelectedTabPosition() == 1) {
+        if (binding.searchTabs.getSelectedTabPosition() != 0) {
             binding.searchTabs.selectTab(binding.searchTabs.getTabAt(0));
         }
         renderSearchHistory();
@@ -187,7 +204,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderSearchHistory() {
         binding.recentLineSearches.removeAllViews();
-        for (String query : LocalTransitStore.recentSearches(this, LocalTransitStore.TYPE_LINE)) {
+        List<String> searches = LocalTransitStore.recentSearches(this, LocalTransitStore.TYPE_LINE);
+        boolean hasSearches = !searches.isEmpty();
+        binding.recentLineSearches.setVisibility(hasSearches ? View.VISIBLE : View.GONE);
+        binding.btnClearLineSearchHistory.setVisibility(hasSearches ? View.VISIBLE : View.GONE);
+        for (String query : searches) {
             Chip chip = new Chip(this);
             chip.setText(query);
             chip.setCheckable(false);

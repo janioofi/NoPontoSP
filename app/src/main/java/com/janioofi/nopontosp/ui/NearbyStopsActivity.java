@@ -23,6 +23,9 @@ import com.janioofi.nopontosp.domain.Parada;
 import com.janioofi.nopontosp.ui.adapters.NearbyStopAdapter;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -30,6 +33,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.zip.GZIPInputStream;
 
 public final class NearbyStopsActivity extends AppCompatActivity {
     private static final int REQUEST_LOCATION = 301;
@@ -172,7 +176,7 @@ public final class NearbyStopsActivity extends AppCompatActivity {
     private List<NearbyStopAdapter.Item> readClosestStops(Location origin) throws Exception {
         List<NearbyStopAdapter.Item> closest = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                getAssets().open("gtfs/stops.txt"), StandardCharsets.UTF_8))) {
+                openStopsTable(), StandardCharsets.UTF_8))) {
             String line;
             reader.readLine();
             while ((line = reader.readLine()) != null) {
@@ -196,6 +200,29 @@ public final class NearbyStopsActivity extends AppCompatActivity {
         }
         Collections.sort(closest, Comparator.comparingDouble(item -> item.distanceMeters));
         return new ArrayList<>(closest.subList(0, Math.min(RESULT_LIMIT, closest.size())));
+    }
+
+    private InputStream openStopsTable() throws IOException {
+        try {
+            return new GZIPInputStream(getAssets().open("gtfs/tables/stops.csv.gz"));
+        } catch (FileNotFoundException missingNewCompressedTable) {
+            try {
+                return new GZIPInputStream(getAssets().open("gtfs/stops.txt.gz"));
+            } catch (FileNotFoundException missingLegacyCompressedTable) {
+                try {
+                    return getAssets().open("gtfs/stops.txt");
+                } catch (FileNotFoundException missingGtfsTable) {
+                    try {
+                        return getAssets().open("stops.txt");
+                    } catch (FileNotFoundException missingRootTable) {
+                        missingRootTable.addSuppressed(missingNewCompressedTable);
+                        missingRootTable.addSuppressed(missingLegacyCompressedTable);
+                        missingRootTable.addSuppressed(missingGtfsTable);
+                        throw missingRootTable;
+                    }
+                }
+            }
+        }
     }
 
     private static List<String> parseCsv(String row) {
